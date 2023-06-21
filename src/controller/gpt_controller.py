@@ -1,7 +1,8 @@
 from langchain import LLMChain, OpenAI
 from langchain.agents import ZeroShotAgent, AgentExecutor
 from langchain.tools import Tool
-from src.Tools import tools_collection
+
+from Tools import tools_collection
 
 
 def create_agent():
@@ -12,8 +13,7 @@ def create_agent():
             description="useful for when user is doing small talk",
         )
     ]
-    prefix = """Answer the following questions as best you can, but speaking as JARVIS from ironman also wait for your master's response. You have access to the\
-                following tools:"""
+    prefix = """Answer the following questions as best you can, but speaking as JARVIS from ironman. You have access to the following tools:"""
     suffix = """Begin! Remember to speak as JARVIS from ironman and treat user as your master when giving your final answer.
 
     Question: {input}
@@ -22,6 +22,8 @@ def create_agent():
     prompt = ZeroShotAgent.create_prompt(
         tool_list, prefix=prefix, suffix=suffix, input_variables=["input", "agent_scratchpad"]
     )
+
+    print("_____________-", prompt.template)
 
     llm_chain = LLMChain(llm=OpenAI(temperature=0), prompt=prompt)
     tool_names = [tool.name for tool in tool_list]
