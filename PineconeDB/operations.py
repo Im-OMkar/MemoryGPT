@@ -20,11 +20,11 @@ PINECONE_INDEX = os.environ.get('PINECONE_INDEX')
 # documents = loader.load()
 # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 # docs = text_splitter.split_documents(documents)
-embeddings = get_embeddings("first thing to remember")
-to_upsert = [{
-    "id": "text_1",
-    "values": embeddings,
-}]
+# embeddings = get_embeddings("first thing to remember")
+# to_upsert = [{
+#     "id": "text_1",
+#     "values": embeddings,
+# }]
 
 # print("************", embeddings)
 
@@ -42,6 +42,9 @@ pinecone.init(
 # query = "What did the president say about Ketanji Brown Jackson"
 # docs = docsearch.similarity_search(query)
 
-index = pinecone.Index(PINECONE_INDEX)
-# index.upsert(to_upsert)
+def upsert(to_upsert: str):
+    index = pinecone.Index(PINECONE_INDEX)
+    index.upsert(to_upsert)
+
+
 print("**********", index.fetch(['text_1']))

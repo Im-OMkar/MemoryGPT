@@ -12,6 +12,8 @@ flask = "*"
 python-dotenv = "*"
 streamlit = "*"
 docs = "*"
+streamlit-chat = "*"
+streamlit-extras = "*"
 
 [dev-packages]
 
