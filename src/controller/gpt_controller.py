@@ -1,20 +1,31 @@
 import logging
 import os
 
+from infinopy import InfinoClient
 from langchain import LLMChain, OpenAI
 from langchain.agents import ZeroShotAgent, AgentExecutor
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.tools import Tool
+from langchain.callbacks import InfinoCallbackHandler
 from dotenv import load_dotenv
+
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 
 
 from Tools import tools_collection
+from src.Visualisation.create_metric import create_metrics
 
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 LLM = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
 _LLM = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo-0613")
+
+client = InfinoClient()
+infino_handler = InfinoCallbackHandler(model_id="test_openai", model_version="0.1", verbose=False)
 
 
 def create_agent():
@@ -40,7 +51,9 @@ def create_agent():
     prompt = ZeroShotAgent.create_prompt(
         tool_list, prefix=prefix, suffix=suffix, input_variables=["input", "agent_scratchpad", "chat_history"]
     )
+
     print("************", prompt)
+
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     llm_chain = LLMChain(llm=LLM, prompt=prompt)
     tool_names = [tool.name for tool in tool_list]
@@ -56,6 +69,6 @@ def create_agent():
 def message_handler(data_obj):
     user_msg = data_obj.message
     agent = create_agent()
-    response = agent.run(user_msg)
-    logging.info(response)
+    response = agent.run(user_msg, callbacks=[infino_handler])
+    create_metrics(client)
     return response

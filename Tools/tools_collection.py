@@ -18,20 +18,21 @@ def small_talk(msg_user):
     answer = LLM(prompt)
     return answer
 
-# def for_vacation(question):
-#     schema = {
-#         "properties": {
-#             "startDate": {"type": "string"},
-#             "endDate": {"type": "string"},
-#         }
-#     }
-#     prompt = f"""
-#     Start with telling the employee what kind of function you do.
-#     And you will require the following fields to set leave vacation or free time:
-#     required_fields: startdate, enddate
-#
-#     master's message : {question}
-#     """
-#     chain = create_tagging_chain(schema, _LLM)
-#     print("*********", chain.llm_kwargs)
-#     print("&&&&&&&&&", chain.run(prompt))
+
+def for_vacation(question):
+    schema = {
+        "properties": {
+            "startDate": {"type": "string"},
+            "endDate": {"type": "string"},
+        }
+    }
+    prompt = f"""
+    Start with telling the employee what kind of function you do.
+    And you will require the following fields to set leave vacation or free time:
+    required_fields: startdate, enddate
+
+    master's message : {question}
+    """
+    chain = create_tagging_chain(schema, _LLM)
+    print("*********", chain.llm_kwargs)
+    print("&&&&&&&&&", chain.run(prompt))
